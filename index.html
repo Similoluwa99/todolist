@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Tasks</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-viewport">
+    <div class="app-container">
+      
+      <!-- Top Header & Live Date -->
+      <header class="app-header">
+        <div class="header-main">
+          <div class="title-group">
+            <span class="date-badge" id="current-date-badge">Today</span>
+            <h1 class="app-title">My Tasks</h1>
+          </div>
+          <div class="header-badge" id="header-total-pill">
+            <span class="badge-dot"></span>
+            <span id="header-total-text">0 tasks</span>
+          </div>
+        </div>
+
+        <!-- Metric Counter Cards at Top (Requirement: See total number of task at the top) -->
+        <div class="stats-overview" role="region" aria-label="Task statistics">
+          <button type="button" class="stat-card active" data-filter="all" title="View all tasks">
+            <div class="stat-icon-wrap icon-all">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num" id="total-count">0</span>
+              <span class="stat-name">Total Tasks</span>
+            </div>
+          </button>
+
+          <button type="button" class="stat-card" data-filter="active" title="View active tasks">
+            <div class="stat-icon-wrap icon-pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num" id="pending-count">0</span>
+              <span class="stat-name">In Progress</span>
+            </div>
+          </button>
+
+          <button type="button" class="stat-card" data-filter="recurring" title="View recurring tasks">
+            <div class="stat-icon-wrap icon-recurring">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num" id="recurring-count">0</span>
+              <span class="stat-name">Recurring</span>
+            </div>
+          </button>
+
+          <button type="button" class="stat-card" data-filter="completed" title="View completed tasks">
+            <div class="stat-icon-wrap icon-done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num" id="completed-count">0</span>
+              <span class="stat-name">Done</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-box">
+          <svg class="search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="search" 
+            id="search-input" 
+            placeholder="Search tasks or dates..." 
+            autocomplete="off"
+            aria-label="Search tasks"
+          >
+          <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- New Task Composer Card -->
+      <section class="composer-card" aria-label="Add new task">
+        <form id="add-task-form" novalidate>
+          <div class="composer-top-row">
+            <div class="composer-input-wrap">
+              <input 
+                type="text" 
+                id="task-title-input" 
+                class="composer-title-input" 
+                placeholder="What do you need to do?" 
+                maxlength="140"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <button type="submit" class="composer-submit-btn" id="add-task-btn" title="Add task">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add</span>
+            </button>
+          </div>
+          <span class="field-error" id="title-error" aria-live="polite"></span>
+
+          <!-- Composer Options Row -->
+          <div class="composer-options">
+            <div class="option-pill" id="date-pill">
+              <svg class="pill-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <label for="task-due-date-input" class="sr-only">Due date <span aria-hidden="true">*</span></label>
+              <input type="date" id="task-due-date-input" class="date-clean-input" title="Due date (required)" required>
+              <span class="pill-required" aria-hidden="true">*</span>
+            </div>
+            <span class="field-error" id="date-error" aria-live="polite"></span>
+
+            <div class="option-pill">
+              <svg class="pill-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+              <label for="task-recurrence-input" class="sr-only">Recurrence</label>
+              <select id="task-recurrence-input" class="select-clean-input" title="Repeat schedule">
+                <option value="none">Does not repeat</option>
+                <option value="daily">Repeats Daily</option>
+                <option value="weekly">Repeats Weekly</option>
+                <option value="monthly">Repeats Monthly</option>
+                <option value="yearly">Repeats Yearly</option>
+              </select>
+            </div>
+
+            <label class="option-toggle" title="Mark as completed upon creation">
+              <input type="checkbox" id="task-status-input">
+              <span class="toggle-checkbox"></span>
+              <span class="toggle-label" id="add-status-label">Done</span>
+            </label>
+          </div>
+        </form>
+      </section>
+
+      <!-- Task List Section -->
+      <main class="tasks-container" aria-label="Task list">
+        <div class="tasks-bar">
+          <h2 class="view-heading" id="view-heading">All Tasks</h2>
+          <span class="view-counter" id="view-counter">0 items</span>
+        </div>
+
+        <!-- Task List Items -->
+        <ul id="task-list" class="task-list" aria-live="polite">
+          <!-- Tasks injected via script.js -->
+        </ul>
+
+        <!-- Refined Empty State -->
+        <div id="empty-state" class="empty-state" hidden>
+          <div class="empty-art">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor">
+              <rect x="14" y="8" width="36" height="48" rx="6" stroke-width="2.5" class="art-body"></rect>
+              <path d="M22 22h20M22 32h14M22 42h8" stroke-width="2.5" stroke-linecap="round"></path>
+              <circle cx="46" cy="46" r="12" fill="var(--surface-color)" stroke-width="2.5" class="art-badge"></circle>
+              <polyline points="41 46 44.5 49.5 51 43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="art-check"></polyline>
+            </svg>
+          </div>
+          <h3 class="empty-headline" id="empty-title">All tasks completed</h3>
+          <p class="empty-subtext" id="empty-message">You have no tasks in this view. Enjoy your day or add a new task above.</p>
+        </div>
+      </main>
+
+      <!-- App Footer -->
+      <footer class="app-footer">
+        <p>Focus Tasks &bull; Saved locally in your browser</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Edit Task Modal Dialog -->
+  <div id="edit-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="edit-modal-title" class="modal-title">Edit Task</h2>
+        <button type="button" class="modal-close" id="close-edit-modal-btn" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="edit-task-form" novalidate>
+        <input type="hidden" id="edit-task-id">
+        
+        <div class="form-row">
+          <label for="edit-task-title" class="form-label">Task Description</label>
+          <input 
+            type="text" 
+            id="edit-task-title" 
+            class="modal-input" 
+            maxlength="140"
+            required
+            autocomplete="off"
+          >
+          <span class="field-error" id="edit-title-error" aria-live="polite"></span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="edit-task-due-date" class="form-label">Due Date <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="date" id="edit-task-due-date" class="modal-input" required>
+            <span class="field-error" id="edit-date-error" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="edit-task-recurrence" class="form-label">Recurrence</label>
+            <select id="edit-task-recurrence" class="modal-input">
+              <option value="none">Does not repeat</option>
+              <option value="daily">Repeats Daily</option>
+              <option value="weekly">Repeats Weekly</option>
+              <option value="monthly">Repeats Monthly</option>
+              <option value="yearly">Repeats Yearly</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row status-check-row">
+          <label class="custom-check-label">
+            <input type="checkbox" id="edit-task-status">
+            <span class="custom-check-box"></span>
+            <span id="edit-status-label" class="check-text">Mark as completed</span>
+          </label>
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" class="btn btn-ghost" id="cancel-edit-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal Dialog -->
+  <div id="delete-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" hidden>
+    <div class="modal-card modal-delete-card">
+      <div class="delete-icon-bubble">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <h2 id="delete-modal-title" class="modal-title">Delete Task?</h2>
+      <p class="delete-desc">
+        Are you sure you want to delete <strong id="delete-task-preview">this task</strong>? This action cannot be undone.
+      </p>
+      <div class="modal-buttons">
+        <button type="button" class="btn btn-ghost" id="cancel-delete-btn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification with Undo -->
+  <aside id="toast" class="toast" aria-live="polite" hidden>
+    <span id="toast-message" class="toast-text">Task completed</span>
+    <button type="button" id="toast-undo-btn" class="toast-btn" hidden>Undo</button>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
